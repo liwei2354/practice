@@ -5,16 +5,25 @@
 
 #define THREAD_NUMBER 4
 
+typedef void * (*threadFunc_t)(void *);
+
 pthread_t tidArr[THREAD_NUMBER];
 
-typedef void * (*threadFunc_t)(void *);
+int flag = 1;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void * threadFunc1(void * arg)
 {
 	while(1)
-	{ 
-		fprintf(stdout,"%c",'A');
-		fflush(NULL);
+	{
+		pthread_mutex_lock(&mutex);
+		if(1 == flag)
+		{
+			fprintf(stdout,"%c",'A');
+			fflush(NULL);
+			flag = 2;
+		}
+		pthread_mutex_unlock(&mutex);
 		sleep(1);
 	}
 	
@@ -25,8 +34,15 @@ void * threadFunc2(void * arg)
 {
 	while(1)
 	{ 
-		fprintf(stdout,"%c",'B');
-		fflush(NULL);
+		pthread_mutex_lock(&mutex);
+		if(2 == flag)
+		{
+			fprintf(stdout,"%c",'B');
+			fflush(NULL);
+			flag = 3;
+		}
+		
+		pthread_mutex_unlock(&mutex);
 		sleep(1);
 	}
 	
@@ -37,8 +53,15 @@ void * threadFunc3(void * arg)
 {
 	while(1)
 	{ 
-		fprintf(stdout,"%c",'C');
-		fflush(NULL);
+		pthread_mutex_lock(&mutex);
+		if(3 == flag)
+		{
+			fprintf(stdout,"%c",'C');
+			fflush(NULL);
+			flag = 4;
+		}
+		
+		pthread_mutex_unlock(&mutex);
 		sleep(1);
 	}
 	
@@ -49,8 +72,15 @@ void * threadFunc4(void * arg)
 {
 	while(1)
 	{ 
-		fprintf(stdout,"%c",'D');
-		fflush(NULL);
+		pthread_mutex_lock(&mutex);
+		if(4 == flag)
+		{
+			fprintf(stdout,"%c",'D');
+			fflush(NULL);
+			flag = 1;
+		}
+		
+		pthread_mutex_unlock(&mutex);
 		sleep(1);
 	}
 	
@@ -94,6 +124,7 @@ int main(int argc,char **argv)
 	{
 		pause();
 	}
+	pthread_mutex_destroy(&mutex);
 }
 
 
