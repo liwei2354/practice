@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <signal.h>
+#include <unistd.h>
 
 #define THREAD_NUMBER 4
 #define COND_NUMBER 4
